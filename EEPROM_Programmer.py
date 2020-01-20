@@ -83,7 +83,7 @@ def writeEEPROM(address, data):
 	wiringpi.digitalWrite(WRITE_EN, HIGH)
 
 	# delay before next write (just to be sure)
-	sleep(0.1)
+	sleep(0.01)
 
 
 # prints the first 256 bytes
@@ -107,6 +107,8 @@ def print256bytes():
 
 		return_string = "".join(return_list)
 		print return_string
+
+	print("\n")
 
 
 # Prints the entire contents of the EEPROM
@@ -132,12 +134,33 @@ def printContents():
                 print return_string
 
 
+# Write a series of bytes starting at an address
 
-# using the program
+def writeBytes(start_address, bytes):
+
+	offset = 0
+	for byte in bytes:
+		writeEEPROM(start_address + offset, byte)
+		offset = offset + 1
+
+
+
+
+# Erases an amount of bytes after start address
+
+def eraseBytes(start_address, amount):
+
+	counter = 0
+	while counter < amount:
+		writeEEPROM(start_address + counter, 0xff)
+		counter = counter + 1
+
+
+# Using the program
 
 def instruct():
 
-	address = 0x9
+	'''address = 0x9
 
 	print("Reading EEPROM")
 	print(readEEPROM(address))
@@ -147,8 +170,15 @@ def instruct():
 
 	print("Reading EEPROM")
 	print(readEEPROM(address))
+	'''
 
-	printContents()
+	bytes = [0xca, 0xfe, 0xba, 0xbe, 0xde, 0xad, 0xbe, 0xef]
+	writeBytes(0x0, bytes)
+
+	print256bytes()
+
+	eraseBytes(0x0, 256)
+	print256bytes()
 
 
 # setup board and most pins for use
