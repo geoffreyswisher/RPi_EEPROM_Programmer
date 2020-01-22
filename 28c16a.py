@@ -160,18 +160,6 @@ def eraseBytes(start_address, amount):
 
 def instruct():
 
-	'''address = 0x9
-
-	print("Reading EEPROM")
-	print(readEEPROM(address))
-
-	print("Writing to EEPROM")
-	writeEEPROM(address, 0x88)
-
-	print("Reading EEPROM")
-	print(readEEPROM(address))
-	'''
-
 	bytes = [0xca, 0xfe, 0xba, 0xbe, 0xde, 0xad, 0xbe, 0xef]
 	writeBytes(0x0, bytes)
 
@@ -201,4 +189,6 @@ def setup():
 
 	instruct()
 
-setup()
+	
+if __name__ == "__main__":
+	setup()
