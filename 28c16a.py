@@ -59,7 +59,7 @@ def readEEPROM(address):
 	for pin in reversed(EEPROM_DATA):
 		data = (data << 1) + wiringpi.digitalRead(pin)
 
-	return hex(data)
+	return data
 
 
 # Write to an address on the EEPROM
@@ -96,13 +96,13 @@ def print256bytes():
 		return_list = []
 
 		# the base value - the "0x"
-		return_list.append(hex(base)[2:])
+		return_list.append("%04x" % base)
 		return_list.append(": ")
 
 		for offset in range(0, 16):
 
 			# the single byte value - the "0x"
-			return_list.append(readEEPROM(base + offset)[2:])
+			return_list.append("%02x" % readEEPROM(base + offset))
 			return_list.append(" ")
 
 		return_string = "".join(return_list)
@@ -121,13 +121,13 @@ def printContents():
                 return_list = []
 
                 # the base value - the "0x" 
-                return_list.append(hex(base)[2:])
+                return_list.append("%04x" % base)
                 return_list.append(": ")
 
                 for offset in range(0, 16):
 
                         # the single byte value - the "0x"
-                        return_list.append(readEEPROM(base + offset)[2:])
+                        return_list.append("%02x" % readEEPROM(base + offset))
                         return_list.append(" ")
 
                 return_string = "".join(return_list)
@@ -148,11 +148,11 @@ def writeBytes(start_address, bytes):
 
 # Erases an amount of bytes after start address
 
-def eraseBytes(start_address, amount):
+def eraseBytes(start_address, amount, data=0xff):
 
 	counter = 0
 	while counter < amount:
-		writeEEPROM(start_address + counter, 0xff)
+		writeEEPROM(start_address + counter, data)
 		counter = counter + 1
 
 
@@ -166,7 +166,13 @@ def instruct():
 	print256bytes()
 
 	eraseBytes(0x0, 256)
-	print256bytes()
+
+
+	eraseBytes(0x0, 2048, 0xea)
+	bytes = [0xaa,0x00]
+	writeBytes(0x7fc, bytes)
+	printContents()
+
 
 
 # setup board and most pins for use
